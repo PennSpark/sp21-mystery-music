@@ -26,8 +26,11 @@ const pairSchema = new Schema({
         type: String,
     },
     songId: {
-        type: Number,
+        type: String,
     },
+    songURL: {
+      type: String,
+  },
 });
 
 const gameSchema = new Schema({
