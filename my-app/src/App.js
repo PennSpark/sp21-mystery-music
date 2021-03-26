@@ -1,6 +1,6 @@
 // App.js
 import React, { Component } from 'react';
-import PubNubReact from 'pubnub-react';
+import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
 
