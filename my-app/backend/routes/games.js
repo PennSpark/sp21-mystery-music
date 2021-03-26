@@ -51,7 +51,8 @@ router.route('/addPair/:id').post((req, res) => {
             playerName: req.body.playerName,
             playerId: req.body.playerId,
             songName: req.body.songName,
-            songId: req.body.songId
+            songId: req.body.songId,
+            songURL: req.body.songURL
         })
     
         game.save()
@@ -76,6 +77,17 @@ router.route('/addPlayer/:id').post((req, res) => {
         })
         .catch(err => res.status(400).json('Error: ' + err));
     });
+
+router.route('/getRandomPair/:id').get((req, res) => {
+    Game.findById(req.params.id)
+        .then(game => {
+            var pair = game.songPlayerPairs.splice(Math.floor(Math.random() * game.songPlayerPairs.length), 1);
+            game.save()
+                .then(() => res.json(pair))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+});
 
 
 module.exports = router;
