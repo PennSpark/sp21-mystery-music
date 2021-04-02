@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
+import './index.css';
 
 class App extends Component {
   constructor(props) {
@@ -68,8 +69,6 @@ class App extends Component {
       withPresence: true
     });
 
-
-
     // Open the modal sweetalert2
     Swal.mixin({
       confirmButtonText: 'Next &rarr;',
@@ -86,12 +85,11 @@ class App extends Component {
       }
     ]).then((result) => {
       if (result.value) {
-        // not sure if need to stringify with only one input, can't test ):
-        const answers = JSON.stringify(result.value)
+        // const answers = JSON.stringify(result.value)
         Swal.fire({
           html: `
             Your spotify:
-            <pre><code>${answers}</code></pre>
+            <pre><code>${result.value[1]}</code></pre>
           `,
           confirmButtonText: 'Play!'
         })
@@ -124,11 +122,11 @@ class App extends Component {
       }
     ]).then((result) => {
       if (result.value) {
-        const answers = JSON.stringify(result.value)
+        // const answers = JSON.stringify(result.value)
         Swal.fire({
           html: `
             Your spotify:
-            <pre><code>${answers[0]}</code></pre>
+            <pre><code>${result.value[1]}</code></pre>
           `,
           confirmButtonText: 'Play!'
         })
@@ -203,24 +201,34 @@ class App extends Component {
     return (
       <div>
         <div className="title">
-          <p> Spotify Game </p>
+          <h1> MysteryMusic </h1>
         </div>
         {
           !this.state.isPlaying &&
           <div className="game">
             <div className="board">
               <div className="button-container">
+                <div id="create-container">
+                  <h2>Host</h2>
+                  <h3>Start the game!</h3> <br></br>
+                  <h4>Create the game for other players to join</h4>
                 <button
-                  className="create-button "
+                  className="button "
                   disabled={this.state.isDisabled}
                   onClick={(e) => this.onPressCreate()}
                 > Create
                 </button>
+                </div>
+                <div id="join-container">
+                <h2>Joiner</h2>
+                  <h3>Join a game!</h3> <br></br>
+                  <h4>Join a game another player is hosting</h4>
                 <button
-                  className="join-button"
+                  className="button"
                   onClick={(e) => this.onPressJoin()}
                 > Join
                 </button>
+                </div>
               </div>
             </div>
           </div>
