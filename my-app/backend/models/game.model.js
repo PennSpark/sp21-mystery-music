@@ -35,6 +35,7 @@ const pairSchema = new Schema({
 
 const gameSchema = new Schema({
   joinCode: { type: String, unique: true},
+  size: { type: Number, default: 1},
   players: [playerSchema],
   songPlayerPairs: [pairSchema],
 }, {

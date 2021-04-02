@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
+import axios from 'axios';
 import './index.css';
 
 class App extends Component {
@@ -63,6 +64,13 @@ class App extends Component {
     // Create a random name for the channel
     this.roomId = shortid.generate().substring(0, 5);
     this.lobbyChannel = 'spotifylobby--' + this.roomId;
+
+    //endpoint for creating a new game in databsae
+    const newGame = {
+      joincode : this.roomId,
+    };
+    axios.post('http://localhost:5000/games/add', newGame)
+      .then(res => console.log(res.data));
 
     this.pubnub.subscribe({
       channels: [this.lobbyChannel],
@@ -133,6 +141,14 @@ class App extends Component {
         // Check if the user typed a value in the input field
         if (result.value[1]) {
           this.joinRoom(result.value[1]);
+          //endpoint for adding a new player to a game in databsae
+          const newPlayer= {
+            joincode : result.value[0],
+            name: "filler",
+            id: result.value[1]
+          };
+          axios.post('http://localhost:5000/games/addPlayer', newPlayer)
+            .then(res => console.log(res.data));
         }
       }
     })
@@ -148,7 +164,7 @@ class App extends Component {
     this.pubnub.hereNow({
       channels: [this.lobbyChannel],
     }).then((response) => {
-      if (response.totalOccupancy < 5) {
+      if (response.totalOccupancy < 8) {
         this.pubnub.subscribe({
           channels: [this.lobbyChannel],
           withPresence: true
