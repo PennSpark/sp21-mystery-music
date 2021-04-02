@@ -33,6 +33,7 @@ router.route('/update/:id').post((req, res) => {
 Game.findById(req.params.id)
     .then(game => {
     game.joinCode = req.body.joinCode;
+    game.size = req.body.size;
     game.players = req.body.players;
     game.songPlayerPairs = req.body.songPlayerPairs;
 
@@ -70,7 +71,27 @@ router.route('/addPlayer/:id').post((req, res) => {
             name: req.body.name,
             id: req.body.id,
         })
+
+        game.size = game.size + 1;
     
+        game.save()
+            .then(() => res.json('Player Added!'))
+            .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+    });
+
+router.route('/addPlayer').post((req, res) => {
+    Game.findOne({joinCode: req.body.joinCode})
+        .then(game => {
+
+        game.players.push({
+            name: req.body.name,
+            id: req.body.id,
+        })
+
+        game.size = game.size + 1;
+        
         game.save()
             .then(() => res.json('Player Added!'))
             .catch(err => res.status(400).json('Error: ' + err));
