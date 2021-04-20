@@ -1,5 +1,7 @@
 // App.js
 import React, { Component } from 'react';
+import Game from './Game';
+import game from './Board';
 import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
@@ -67,7 +69,7 @@ class App extends Component {
 
     //endpoint for creating a new game in databsae
     const newGame = {
-      joincode : this.roomId,
+      joincode: this.roomId,
     };
     axios.post('http://localhost:5000/games/add', newGame)
       .then(res => console.log(res.data));
@@ -88,7 +90,7 @@ class App extends Component {
         text: this.roomId
       },
       {
-        title: 'Type your spotify here',
+        title: 'Type your username here',
         input: 'text'
       }
     ]).then((result) => {
@@ -96,20 +98,29 @@ class App extends Component {
         // const answers = JSON.stringify(result.value)
         Swal.fire({
           html: `
-            Your spotify:
+            Your username:
             <pre><code>${result.value[1]}</code></pre>
           `,
           confirmButtonText: 'Play!'
-        })
+        });
+
+        this.setState({
+          player: result.value[1],
+          isRoomCreator: true,
+          isDisabled: true, // Disable the 'Create' button
+          myTurn: true, // Room creator makes the 1st move
+        });
+
+        //endpoint for adding a new player to a game in databsae
+        const newPlayer = {
+          joincode: result.value[0],
+          name: "filler",
+          id: result.value[1]
+        };
+        axios.post('http://localhost:5000/games/addPlayer', newPlayer)
+          .then(res => console.log(res.data));
       }
     })
-
-    this.setState({
-      player: '1',
-      isRoomCreator: true,
-      isDisabled: true, // Disable the 'Create' button
-      myTurn: true, // Room creator makes the 1st move
-    });
   }
 
   // The 'Join' button was pressed
@@ -125,7 +136,7 @@ class App extends Component {
         input: 'text'
       },
       {
-        title: 'Type your spotify here',
+        title: 'Type your username here',
         input: 'text'
       }
     ]).then((result) => {
@@ -133,20 +144,26 @@ class App extends Component {
         // const answers = JSON.stringify(result.value)
         Swal.fire({
           html: `
-            Your spotify:
+            Your username:
             <pre><code>${result.value[1]}</code></pre>
           `,
           confirmButtonText: 'Play!'
-        })
+        });
         // Check if the user typed a value in the input field
         if (result.value[1]) {
-          this.joinRoom(result.value[1]);
+          this.joinRoom(result.value[0]);
+
+          this.setState({
+            player: result.value[1],
+          });
+
           //endpoint for adding a new player to a game in databsae
-          const newPlayer= {
-            joincode : result.value[0],
+          const newPlayer = {
+            joincode: result.value[0],
             name: "filler",
             id: result.value[1]
           };
+
           axios.post('http://localhost:5000/games/addPlayer', newPlayer)
             .then(res => console.log(res.data));
         }
@@ -165,13 +182,11 @@ class App extends Component {
       channels: [this.lobbyChannel],
     }).then((response) => {
       if (response.totalOccupancy < 8) {
+        this.size += 1;
+
         this.pubnub.subscribe({
           channels: [this.lobbyChannel],
           withPresence: true
-        });
-
-        this.setState({
-          player: `${response.totalOccupancy + 1}`,
         });
 
         this.pubnub.publish({
@@ -228,25 +243,44 @@ class App extends Component {
                   <h2>Host</h2>
                   <h3>Start the game!</h3> <br></br>
                   <h4>Create the game for other players to join</h4>
-                <button
-                  className="button "
-                  disabled={this.state.isDisabled}
-                  onClick={(e) => this.onPressCreate()}
-                > Create
+                  <button
+                    className="button "
+                    disabled={this.state.isDisabled}
+                    onClick={(e) => this.onPressCreate()}
+                  > Create
                 </button>
                 </div>
                 <div id="join-container">
-                <h2>Joiner</h2>
+                  <h2>Joiner</h2>
                   <h3>Join a game!</h3> <br></br>
                   <h4>Join a game another player is hosting</h4>
-                <button
-                  className="button"
-                  onClick={(e) => this.onPressJoin()}
-                > Join
+                  <button
+                    className="button"
+                    onClick={(e) => this.onPressJoin()}
+                  > Join
                 </button>
                 </div>
               </div>
             </div>
+          </div>
+        }
+
+        {
+          this.state.isPlaying &&
+          <div className="game">
+            <h3>Your room code: {this.roomId}</h3>
+            {
+            // TODO: get size from database 
+            }
+            <h3>Number of people in game: {this.size}</h3>
+          <Game
+            pubnub={this.pubnub}
+            gameChannel={this.gameChannel}
+            player={this.player}
+            size={this.size}
+            isRoomCreator={this.state.isRoomCreator}
+            endGame={this.endGame}
+          />
           </div>
         }
       </div>
