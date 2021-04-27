@@ -2,24 +2,34 @@ import React from 'react';
 import Board from './Board';
 import Swal from "sweetalert2";  
 
+const option_letters = ['A', 'B', 'C', 'D'];
+
 class Game extends React.Component {
+
   constructor(props) {
     super(props);
+    
     this.state = {
       // TODO: get number of players in game from database and replace 8
       // also fill the squares with the player names in fillArray
       squares: this.fillArray(8), 
-  
+      
     };
+
+    this.setState({
+      countdown: 10,
+    });
+
+    this.player = this.props.player;
     this.round = 0;
-    this.scores = Array(8).fill(0);
+    this.score = 0;
     this.gameOver = false;
     this.counter = 0;
     this.answer = 0;
   }
 
   // function for each new round
-  newRound = () =>{
+  newRound = () => {
     var squares = this.state.squares;
 
     squares = Array(8).fill("temp");
@@ -27,21 +37,23 @@ class Game extends React.Component {
     this.answer = this.round;
 
     this.setState({
-      // update scores
+      // update squares
       squares: squares,
     });
+
+    // update scores
   }
 
   timer = () => {
     var timeleft = 10;
     var timer = setInterval(function(){
-      if(timeleft <= 0){
+      if (timeleft <= 0){
         clearInterval(timer);
         document.getElementById("countdown").innerHTML = "Finished";
         this.round += 1;
         var x = this.round;
         document.getElementById("status").innerHTML = 'Round:' + x;
-        this.newRound();
+        //this.newRound();
       } else {
         document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
       }
@@ -50,6 +62,8 @@ class Game extends React.Component {
   }
 
   fillArray(size) {
+
+    // TODO: get players from db to fill the array with
     var array = Array(size).fill();
     for (var index = 0; index < array.length; index++) {
       array[index] = index;
@@ -58,7 +72,7 @@ class Game extends React.Component {
   }
 
   nextTurn(n) {
-    // TODO: get next player from api calls
+    // TODO: get next player from api calls?
     // currently a placeholder
     return Math.floor(Math.random() * n);
   }
@@ -73,12 +87,12 @@ class Game extends React.Component {
       // Start a new game
       if(msg.message.reset){
         this.setState({
-          // update scores
+          // update players
           squares: this.fillArray(8),
         });
 
         this.round = 0;
-        this.scores = Array(8).fill(0);
+        this.score = 0;
         this.gameOver = false;
         this.counter = 0;
         this.answer = 0;
@@ -93,9 +107,15 @@ class Game extends React.Component {
     });
   }
 
-	// Update score for the winner
+	// Update score if answer is correct
   updateScore = (winner) => {
-    // TODO: Implement function
+    // if selected index = correct index
+    if (true) {
+      this.score += 1;
+    }
+
+    // TODO: use this.player and this.score value to 
+    // update score for player in db
 
 		// End the game once there is a winner
 		// this.gameOver = true;
@@ -155,6 +175,7 @@ class Game extends React.Component {
   };
    
   // Publishing an opponent's move onto the board
+  // not even necessary ):
   publishMove = (index, piece) => {
     var squares = this.state.squares;
 
@@ -207,13 +228,14 @@ class Game extends React.Component {
 // After 20 rounds, the player with the most number of points wins!
 
   render() {
+
     let status;
     // Change to current round
     status = `${this.round}`;
 
     return (
       <div className="game">
-         You are player {this.props.player}
+         You are player {this.player}
         <div className="prompt">
           Guess who! {this.answer}
         </div>

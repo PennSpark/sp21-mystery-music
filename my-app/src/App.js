@@ -16,8 +16,9 @@ class App extends Component {
       publishKey: "pub-c-353f0377-1a09-4a4f-be96-1f51d601592c",
       subscribeKey: "sub-c-7cb8e092-8c1a-11eb-9de7-3a1dcc291cdf"
     });
+    // TODO: Clean up code and get rid of unnecessary bits
     this.state = {
-      player: '', // 1, 2, 3, 4, 5
+      player: '', // username players enter for themselves
       isPlaying: false, // Set to true when at least 2 players are in a channel
       isRoomCreator: false,
       isDisabled: false,
@@ -25,7 +26,7 @@ class App extends Component {
     };
     this.lobbyChannel = null; // Lobby channel
     this.gameChannel = null; // Game channel
-    this.size = null; // Number of players in room
+    this.size = null; // Number of players in room USE DATABASE FOR THIS
     this.roomId = null; // Unique id when player creates a room
     this.pubnub.init(this); // Initialize PubNub
   }
@@ -111,7 +112,7 @@ class App extends Component {
           myTurn: true, // Room creator makes the 1st move
         });
 
-        //endpoint for adding a new player to a game in databsae
+        //endpoint for adding a new player to a game in database
         const newPlayer = {
           joincode: result.value[0],
           name: "filler",
@@ -276,7 +277,7 @@ class App extends Component {
           <Game
             pubnub={this.pubnub}
             gameChannel={this.gameChannel}
-            player={this.player}
+            player={this.state.player}
             size={this.size}
             isRoomCreator={this.state.isRoomCreator}
             endGame={this.endGame}
