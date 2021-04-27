@@ -1,38 +1,85 @@
-.App {
-  text-align: center;
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+@import url("https://fonts.googleapis.com/css?family=Karla:400,700,700italic|Roboto:400");
+:root {
+  --summer-green: #92b4a7;
+  --white: #ffffff;
+
+  --font-size-m: 18px;
+
+  --font-family-karla: "Karla", Helvetica;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.home-v2-1 {
+  align-items: center;
+  background-color: var(--summer-green);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  overflow: hidden;
+  padding: 18px 44px;
+}
+.home-v2-1 .card-pricing-2 {
+  height: 927px;
+  left: 0;
+  position: absolute;
+  top: 4px;
+  width: 1104px;
+  z-index: 1;
+}
+.home-v2-1 .card-pricing-3 {
+  cursor: pointer;
+  height: 649px;
+  left: 161px;
+  position: absolute;
+  top: 282px;
+  width: 449px;
+  z-index: 1;
+}
+.home-v2-1 .overlap-group {
+  height: 931px;
+  margin-top: 63px;
+  position: relative;
+  width: 1268px;
+}
+.home-v2-1 .text-1 {
+  color: var(--white);
+  font-family: var(--font-family-karla);
+  font-size: var(--font-size-m);
+  font-weight: 700;
+  left: 590px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 0;
+  width: 678px;
+}
+
+.home-v2-1 .flex-row {
+  position: absolute;
+  display: flex;
+  margin-top: 618px;
+  margin-left: 295px;
+  z-index: 2;
+}
+button {
+  background-color: #A01A7D; 
   color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 232px;
+  height: 59px;
+  font-size: larger;
+  font-weight: bold;
+  border-radius: 10px;
+}
+button:hover {
+  background-color: rgb(235, 235, 235);
+  font-size: larger;
+  font-weight: bold;
+  color: #A01A7D;
+}
+.join-button {
+  margin-left: 262px;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

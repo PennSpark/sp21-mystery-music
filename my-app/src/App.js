@@ -6,7 +6,7 @@ import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
 import axios from 'axios';
-import './index.css';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -69,9 +69,9 @@ class App extends Component {
 
     //endpoint for creating a new game in databsae
     const newGame = {
-      joincode: this.roomId,
+      joinCode: this.roomId,
     };
-    axios.post('http://localhost:5000/games/add', newGame)
+    axios.post('http://localhost:5001/games/add', newGame)
       .then(res => console.log(res.data));
 
     this.pubnub.subscribe({
@@ -111,13 +111,11 @@ class App extends Component {
           myTurn: true, // Room creator makes the 1st move
         });
 
-        //endpoint for adding a new player to a game in databsae
         const newPlayer = {
-          joincode: result.value[0],
-          name: "filler",
-          id: result.value[1]
+          joinCode: this.roomId,
+          playerName: result.value[1]
         };
-        axios.post('http://localhost:5000/games/addPlayer', newPlayer)
+        axios.post('http://localhost:5001/games/addPlayer', newPlayer)
           .then(res => console.log(res.data));
       }
     })
@@ -159,13 +157,14 @@ class App extends Component {
 
           //endpoint for adding a new player to a game in databsae
           const newPlayer = {
-            joincode: result.value[0],
-            name: "filler",
-            id: result.value[1]
+            joinCode: result.value[0],
+            playerName: result.value[1]
           };
 
-          axios.post('http://localhost:5000/games/addPlayer', newPlayer)
+          axios.post('http://localhost:5001/games/addPlayer', newPlayer)
             .then(res => console.log(res.data));
+
+            
         }
       }
     })
@@ -227,63 +226,77 @@ class App extends Component {
     });
   }
 
-
   render() {
     return (
-      <div>
-        <div className="title">
-          <h1> MysteryMusic </h1>
-        </div>
-        {
-          !this.state.isPlaying &&
-          <div className="game">
-            <div className="board">
-              <div className="button-container">
-                <div id="create-container">
-                  <h2>Host</h2>
-                  <h3>Start the game!</h3> <br></br>
-                  <h4>Create the game for other players to join</h4>
-                  <button
-                    className="button "
-                    disabled={this.state.isDisabled}
-                    onClick={(e) => this.onPressCreate()}
-                  > Create
-                </button>
-                </div>
-                <div id="join-container">
-                  <h2>Joiner</h2>
-                  <h3>Join a game!</h3> <br></br>
-                  <h4>Join a game another player is hosting</h4>
-                  <button
-                    className="button"
-                    onClick={(e) => this.onPressJoin()}
-                  > Join
-                </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        }
+   <div>
+     {
+       !this.state.isPlaying &&
+   
+       <div class="home-v2-1 screen">
+         <div class="overlap-group">
+           <img
+             class="card-pricing-2"
+             src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/608797e5c0ff3678276ff026/img/card-pricing-2@1x.svg"
+           />
+           <img
+             class="card-pricing-3"
+             src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/608797e5c0ff3678276ff026/img/card-pricing-3@1x.svg"
+           />
+           <div class="text-1">
+             How to Play<br />Up to 8 players may join a game, be sure to share the join code with your friends!<br />During
+             each round, the game will play a song from one of the player’s Spotify playlist.<br />Players then have to
+             select the user whose playlist they think the song is from.<br />Correct answers get 1 point, and wrong answers
+             get 0 points.<br />After 20 rounds, the player with the most number of points wins!
+           </div>
+           <div class="flex-row">
+              <button
+                class="create-button"
+                disabled={this.state.isDisabled}
+                onClick={(e) => this.onPressCreate()}
+                > Create
+              </button>
+              <button
+                class="join-button"
+                onClick={(e) => this.onPressJoin()}
+                > Join
+              </button>
+           </div>
+         </div>
+       </div>
+  
+    }
 
+    {
+      this.state.isPlaying &&
+      <div className="game">
+        <h3>Your room code: {this.roomId}</h3>
         {
-          this.state.isPlaying &&
-          <div className="game">
-            <h3>Your room code: {this.roomId}</h3>
-            {
-            // TODO: get size from database 
-            }
-            <h3>Number of people in game: {this.size}</h3>
-          <Game
-            pubnub={this.pubnub}
-            gameChannel={this.gameChannel}
-            player={this.player}
-            size={this.size}
-            isRoomCreator={this.state.isRoomCreator}
-            endGame={this.endGame}
-          />
-          </div>
+          /*
+        axios.get('http://localhost:5001/games/getGame', {joinCode: this.roomId})
+        .then(response => {
+          this.setState({
+            size : response.data.size
+          });
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+        */
         }
+        <h3>Number of people in game: {this.size}</h3>
+      <Game
+        pubnub={this.pubnub}
+        gameChannel={this.gameChannel}
+        player={this.player}
+        size={this.size}
+        isRoomCreator={this.state.isRoomCreator}
+        endGame={this.endGame}
+      />
       </div>
+    }
+   </div>
+
+                                
     );
   }
 }

@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const playerSchema = new Schema({
-    name: {
+    playerName: {
       type: String,
     },
-    id: {
+    playerId: {
       type: Number,
     },
     score: {
@@ -35,7 +35,7 @@ const pairSchema = new Schema({
 
 const gameSchema = new Schema({
   joinCode: { type: String, unique: true},
-  size: { type: Number, default: 1},
+  size: { type: Number, default: 0},
   players: [playerSchema],
   songPlayerPairs: [pairSchema],
 }, {

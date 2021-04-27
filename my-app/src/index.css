@@ -1,3 +1,4 @@
+/*
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -43,7 +44,7 @@ h4 {
 }
 
 .button {
-  background-color: white; /* Green */
+  background-color: white; 
   border: 2px solid black;
   border-radius: 3px;
   color: black;
@@ -57,3 +58,4 @@ h4 {
 .button:hover {
   background-color: rgb(235, 235, 235);
 }
+*/
