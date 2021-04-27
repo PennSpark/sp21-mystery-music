@@ -48,7 +48,7 @@ class Game extends React.Component {
 
   timer = () => {
     var timeleft = 10;
-    var timer = setInterval(function(){
+    var timer = setInterval(() => {
       if (timeleft <= 0){
         clearInterval(timer);
         //document.getElementById("countdown").innerHTML = "Finished";
