@@ -1,6 +1,7 @@
 import React from 'react';
 import Board from './Board';
 import Swal from "sweetalert2";  
+import './Game.css';
 
 const option_letters = ['A', 'B', 'C', 'D'];
 
@@ -26,6 +27,7 @@ class Game extends React.Component {
     this.gameOver = false;
     this.counter = 0;
     this.answer = 0;
+    
   }
 
   // function for each new round
@@ -49,13 +51,13 @@ class Game extends React.Component {
     var timer = setInterval(function(){
       if (timeleft <= 0){
         clearInterval(timer);
-        document.getElementById("countdown").innerHTML = "Finished";
+        //document.getElementById("countdown").innerHTML = "Finished";
         this.round += 1;
         var x = this.round;
         document.getElementById("status").innerHTML = 'Round:' + x;
         //this.newRound();
       } else {
-        document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
+        //document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
       }
       timeleft -= 1;
     }, 1000);
@@ -218,7 +220,6 @@ class Game extends React.Component {
       this.checkForWinner();
     }
   }
-
 // Instructions
 //   How to Play
 // Up to 8 players may join a game, be sure to share the join code with your friends!
@@ -232,8 +233,8 @@ class Game extends React.Component {
     let status;
     // Change to current round
     status = `${this.round}`;
-
     return (
+      /*
       <div className="game">
          You are player {this.player}
         <div className="prompt">
@@ -257,6 +258,63 @@ class Game extends React.Component {
           </div>
         </div>   
       </div>
+      */
+      <div class="container-center-horizontal">
+      <div class="game-screen-1 screen">
+        <div class="flex-row-5">
+          <img
+            class="mystery-music-logo3-1"
+            src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/608797e5c0ff3678276ff026/img/mysterymusic-logo3-1@2x.png"
+          />
+          <div class="overlap-group">
+            <h1 class="text-1">Guess Whose Playlist?</h1>
+          </div>
+        </div>
+        <div class="flex-row-4">
+          <div class="overlap-group1">
+            <img
+              class="vector-197"
+              src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/6078ee0985f5e7f39b088386/img/vector-197@2x.svg"
+            />
+          </div>
+          <div class="flex-col">
+            <div class="album-cover"></div>
+            <div class="play-bar">
+              <div class="overlap-group3-1">
+                <div class="rectangle"></div>
+              </div>
+            </div>
+          </div>
+          <div class="overlap-group2">
+            <div class="leaderboard-example">
+              <div class="overlap-group3">
+                <div class="name-1 karla-normal-black-24px">Linda</div>
+                <img
+                  class="star-1"
+                  src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/6078ee0985f5e7f39b088386/img/star-1@2x.svg"
+                />
+                <div class="number-1 karla-bold-black-24px">6</div>
+              </div>
+              <div class="flex-row">
+                <div class="name-2 karla-normal-black-24px">Lindsay</div>
+                <div class="number-2 karla-bold-black-24px">5</div>
+              </div>
+              <div class="flex-row-1">
+                <div class="egret karla-normal-black-24px">Egret</div>
+                <div class="number karla-bold-black-24px">3</div>
+              </div>
+              <div class="flex-row-2">
+                <div class="name karla-normal-black-24px">David</div>
+                <div class="number-3 karla-bold-black-24px">1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+ 
+    
     );
   }
 }
