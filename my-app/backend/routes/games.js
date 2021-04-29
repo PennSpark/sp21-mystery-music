@@ -90,6 +90,21 @@ router.route('/addPlayer').post((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
     });
 
+router.route('/updateScore').post((req, res) => {
+    Game.findOne({joinCode: req.body.joinCode})
+        .then(game => {
+
+        const index = game.players.findIndex(player => player.playerName === req.body.playerName);
+
+        game.players[index].score += req.body.score;
+
+        game.save()
+            .then(() => res.json('Score updated!'))
+            .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+    });
+
 router.route('/removePlayer').post((req, res) => {
     Game.findOne({joinCode: req.body.joinCode})
         .then(game => {

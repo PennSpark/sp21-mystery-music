@@ -2,6 +2,7 @@ import React from 'react';
 import Board from './Board';
 import Swal from "sweetalert2";  
 import './Game.css';
+import axios from 'axios';
 
 const option_letters = ['A', 'B', 'C', 'D'];
 
@@ -9,38 +10,39 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    
-    this.state = {
-      // TODO: get number of players in game from database and replace 8
-      // also fill the squares with the player names in fillArray
-      squares: this.fillArray(8), 
-      
-    };
 
     this.setState({
       countdown: 10,
     });
 
     this.player = this.props.player;
+    this.roomId = this.props.roomId;
     this.round = 0;
     this.score = 0;
     this.gameOver = false;
     this.counter = 0;
     this.answer = 0;
-    
+
+    this.state = {
+      //placeholder
+      squares: [], 
+      size : 0
+    };
+
+    console.log("size:" + this.state.size);
   }
 
   // function for each new round
   newRound = () => {
     var squares = this.state.squares;
 
-    squares = Array(8).fill("temp");
+    squares = Array(this.state.size).fill("temp");
     this.round += 1;
     this.answer = this.round;
 
     this.setState({
       // update squares
-      squares: squares,
+      squares: squares
     });
 
     // update scores
@@ -54,7 +56,7 @@ class Game extends React.Component {
         //document.getElementById("countdown").innerHTML = "Finished";
         this.round += 1;
         var x = this.round;
-        document.getElementById("status").innerHTML = 'Round:' + x;
+        //document.getElementById("status").innerHTML = 'Round:' + x;
         //this.newRound();
       } else {
         //document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
@@ -64,12 +66,21 @@ class Game extends React.Component {
   }
 
   fillArray(size) {
-
-    // TODO: get players from db to fill the array with
     var array = Array(size).fill();
-    for (var index = 0; index < array.length; index++) {
-      array[index] = index;
-    }
+    axios.get('http://localhost:5001/games/')
+    .then(response => {
+      for (var i = 0; i < response.data.length; i++){
+        if (response.data[i].joinCode == this.roomId){
+          for (var j = 0; j < response.data[i].players.length; j++){
+            array[j] = response.data[i].players[j];
+          }
+        }
+      }
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+
     return array;
   }
 
@@ -81,6 +92,23 @@ class Game extends React.Component {
 
   componentDidMount() {
     this.timer();
+    //gets size(num of players in game) and updates squares
+    axios.get('http://localhost:5001/games/')
+    .then(response => {
+      for (var i = 0; i < response.data.length; i++){
+        if (response.data[i].joinCode == this.roomId){
+          this.setState({
+            size : response.data[i].size,
+            squares: this.fillArray(response.data[i].size)
+          });
+        }
+      }
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+
+    
     this.props.pubnub.getMessage(this.props.gameChannel, (msg) => {
 
       // Publish move to the opponent's board    
@@ -90,7 +118,7 @@ class Game extends React.Component {
       if(msg.message.reset){
         this.setState({
           // update players
-          squares: this.fillArray(8),
+          squares: this.fillArray(8)
         });
 
         this.round = 0;
@@ -112,12 +140,20 @@ class Game extends React.Component {
 	// Update score if answer is correct
   updateScore = (winner) => {
     // if selected index = correct index
+
+    /*im guessing this is filler so commenting it out
     if (true) {
       this.score += 1;
     }
-
-    // TODO: use this.player and this.score value to 
-    // update score for player in db
+    */
+    const updateScoreThing = {
+      joinCode: this.roomId,
+      playerName: winner,
+      score: 1
+    };
+    axios.post('http://localhost:5001/games/updateScore', updateScoreThing)
+      .then(res => console.log(res.data));
+      
 
 		// End the game once there is a winner
 		// this.gameOver = true;

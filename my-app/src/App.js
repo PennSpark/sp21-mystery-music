@@ -165,8 +165,6 @@ class App extends Component {
 
           axios.post('http://localhost:5001/games/addPlayer', newPlayer)
             .then(res => console.log(res.data));
-
-            
         }
       }
     })
@@ -270,38 +268,6 @@ class App extends Component {
 
     {
       this.state.isPlaying &&
-      <div className="game">
-        <h3>Your room code: {this.roomId}</h3>
-        {
-          this.state.isPlaying &&
-          <div className="game">
-            <h3>Your room code: {this.roomId}</h3>
-            {
-            // TODO: get size from database 
-            }
-            <h3>Number of people in game: {this.size}</h3>
-          <Game
-            pubnub={this.pubnub}
-            gameChannel={this.gameChannel}
-            player={this.state.player}
-            size={this.size}
-            isRoomCreator={this.state.isRoomCreator}
-            endGame={this.endGame}
-          />
-          </div>
-          /*
-        axios.get('http://localhost:5001/games/getGame', {joinCode: this.roomId})
-        .then(response => {
-          this.setState({
-            size : response.data.size
-          });
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        */
-        }
-        <h3>Number of people in game: {this.size}</h3>
       <Game
         pubnub={this.pubnub}
         gameChannel={this.gameChannel}
@@ -309,8 +275,8 @@ class App extends Component {
         size={this.size}
         isRoomCreator={this.state.isRoomCreator}
         endGame={this.endGame}
+        roomId ={this.roomId}
       />
-      </div>
     }
    </div>
 
