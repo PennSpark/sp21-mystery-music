@@ -29,7 +29,8 @@ class Game extends React.Component {
       size : 0
     };
 
-    console.log("size:" + this.state.size);
+    console.log("size: " + this.state.size);
+    console.log("player: " + this.player);
   }
 
   // function for each new round
@@ -85,7 +86,7 @@ class Game extends React.Component {
   }
 
   nextTurn(n) {
-    // TODO: get next player from api calls?
+    // TODO: get next song from the database
     // currently a placeholder
     return Math.floor(Math.random() * n);
   }
@@ -236,7 +237,10 @@ class Game extends React.Component {
     var squares = this.state.squares;
 
     // Update chosen button to show that it's been clicked
-    if(squares[index]) { 
+    console.log(index);
+
+    if (index == 3) { 
+      console.log("correct!");
       squares[index] = 'X';
 
        this.setState({
@@ -256,13 +260,6 @@ class Game extends React.Component {
       this.checkForWinner();
     }
   }
-// Instructions
-//   How to Play
-// Up to 8 players may join a game, be sure to share the join code with your friends!
-// During each round, the game will play a song from one of the player’s Spotify playlist.
-// Players then have to select the user whose playlist they think the song is from.
-// Correct answers get 1 point, and wrong answers get 0 points.
-// After 20 rounds, the player with the most number of points wins!
 
   render() {
 
@@ -270,31 +267,21 @@ class Game extends React.Component {
     // Change to current round
     status = `${this.round}`;
     return (
-      /*
+      
       <div className="game">
-         You are player {this.player}
+         {/* You are player {this.player}
         <div className="prompt">
           Guess who! {this.answer}
         </div>
-        <br></br>
+        <br></br> */}
         
-        <div className="board">
-          <Board
-              squares={this.state.squares}
-              size={this.props.size}
-              onClick={index => this.onMakeMove(index)}
-            />  
-            <p id="status">Round: {this.round}</p>    
-            <div id="countdown"></div>      
-        </div>
-        
-        <div className="scores-container">
+        {/* <div className="scores-container">
           <div>
             SCORES {this.scores}
           </div>
         </div>   
-      </div>
-      */
+      </div> */}
+      
       <div class="container-center-horizontal">
       <div class="game-screen-1 screen">
         <div class="flex-row-5">
@@ -345,8 +332,18 @@ class Game extends React.Component {
               </div>
             </div>
           </div>
+
+        </div>
+        <div className="board">
+          <Board
+              squares={this.state.squares}
+              size={this.props.size}
+              onClick={index => this.onMakeMove(index)}
+            />   
+            <div id="countdown"></div>      
         </div>
       </div>
+    </div>
     </div>
     
  

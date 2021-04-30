@@ -271,7 +271,7 @@ class App extends Component {
       <Game
         pubnub={this.pubnub}
         gameChannel={this.gameChannel}
-        player={this.player}
+        player={this.state.player}
         size={this.size}
         isRoomCreator={this.state.isRoomCreator}
         endGame={this.endGame}

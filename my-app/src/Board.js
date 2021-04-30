@@ -30,7 +30,7 @@ class Board extends React.Component {
 
   render() {
     // TODO: edit createBoard size to reflect number of players in the room
-    return <div>{this.createBoard(1, 8)}</div>;
+    return <div>{this.createBoard(2, 2)}</div>;
   }
 }
 
