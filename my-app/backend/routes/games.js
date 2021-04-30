@@ -54,6 +54,25 @@ router.route('/addPair/:id').post((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
     });
 
+router.route('/addPair').post((req, res) => {
+    Game.findOne({joinCode: req.body.joinCode})
+        .then(game => {
+
+        game.songPlayerPairs.push({
+            playerName: req.body.playerName,
+            playerId: req.body.playerId,
+            songName: req.body.songName,
+            songId: req.body.songId,
+            songURL: req.body.songURL
+        })
+    
+        game.save()
+            .then(() => res.json('Pair Added!'))
+            .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+    });
+
 router.route('/addPlayer/:id').post((req, res) => {
     Game.findById(req.params.id)
         .then(game => {
@@ -78,7 +97,7 @@ router.route('/addPlayer').post((req, res) => {
 
         game.players.push({
             playerName: req.body.playerName,
-            playerId: req.body.playerId,
+            playerId: game.size + 1
         })
 
         game.size = game.size + 1;
@@ -121,7 +140,7 @@ router.route('/removePlayer').post((req, res) => {
         })
         .catch(err => res.status(400).json('Error: ' + err));
     });
-
+    
 router.route('/getRandomPair/:id').get((req, res) => {
     Game.findById(req.params.id)
         .then(game => {
@@ -131,6 +150,20 @@ router.route('/getRandomPair/:id').get((req, res) => {
                 .catch(err => res.status(400).json('Error: ' + err));
         })
         .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
+router.route('/getRandomPair').get((req, res) => {
+    Game.findOne({joinCode: req.body.joinCode})
+    .then(game => {
+        var pair = game.songPlayerPairs.splice(Math.floor(Math.random() * game.songPlayerPairs.length), 1);
+        game.save()
+            .then(() => res.json(pair))
+            .catch(err => res.status(400).json('Error: ' + err));
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+  
+        
 });
 
 

@@ -17,6 +17,7 @@ class Game extends React.Component {
 
     this.player = this.props.player;
     this.roomId = this.props.roomId;
+    this.databaseGameId = this.props.databaseGameId;
     this.round = 0;
     this.score = 0;
     this.gameOver = false;
@@ -68,14 +69,10 @@ class Game extends React.Component {
 
   fillArray(size) {
     var array = Array(size).fill();
-    axios.get('http://localhost:5001/games/')
+    axios.get('http://localhost:5001/games/getGame/' + this.databaseGameId)
     .then(response => {
-      for (var i = 0; i < response.data.length; i++){
-        if (response.data[i].joinCode == this.roomId){
-          for (var j = 0; j < response.data[i].players.length; j++){
-            array[j] = response.data[i].players[j];
-          }
-        }
+      for (var i = 0; i < response.data.players.length; i++){
+        array[i] = response.data.players[i].playerName;
       }
     })
     .catch((error) => {
@@ -85,25 +82,35 @@ class Game extends React.Component {
     return array;
   }
 
+  
+
   nextTurn(n) {
-    // TODO: get next song from the database
-    // currently a placeholder
-    return Math.floor(Math.random() * n);
+    axios.get('http://localhost:5001/games/getRandomPair/' + this.databaseGameId)
+    .then(response => {
+      //player id of song
+      this.answer = response.data[0].playerId;
+      //player name of song if needed
+      console.log(response.data[0].playerName);
+      //name of song if needed
+      console.log(response.data[0].songName);
+    })
+    .catch((error) => {
+        console.log(error);
+    })
   }
 
   componentDidMount() {
     this.timer();
     //gets size(num of players in game) and updates squares
-    axios.get('http://localhost:5001/games/')
+    axios.get('http://localhost:5001/games/getGame/' + this.databaseGameId)
     .then(response => {
-      for (var i = 0; i < response.data.length; i++){
-        if (response.data[i].joinCode == this.roomId){
-          this.setState({
-            size : response.data[i].size,
-            squares: this.fillArray(response.data[i].size)
-          });
-        }
-      }
+      console.log("hi there");
+      console.log(response);
+        this.setState({
+          size : response.data.size,
+          squares: this.fillArray(response.data.size)
+        });
+     
     })
     .catch((error) => {
         console.log(error);

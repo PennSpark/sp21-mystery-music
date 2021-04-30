@@ -28,6 +28,7 @@ class App extends Component {
     this.gameChannel = null; // Game channel
     this.size = null; // Number of players in room USE DATABASE FOR THIS
     this.roomId = null; // Unique id when player creates a room
+    this.databaseGameId = null // id for game in database for endpoints
     this.pubnub.init(this); // Initialize PubNub
   }
 
@@ -119,6 +120,17 @@ class App extends Component {
         };
         axios.post('http://localhost:5001/games/addPlayer', newPlayer)
           .then(res => console.log(res.data));
+          axios.get('http://localhost:5001/games/')
+          .then(response => {
+            for (var i = 0; i < response.data.length; i++){
+              if (response.data[i].joinCode == this.roomId){
+                this.databaseGameId = response.data[i]._id;
+              }
+            }
+          })
+          .catch((error) => {
+              console.log(error);
+          })
       }
     })
   }
@@ -165,6 +177,19 @@ class App extends Component {
 
           axios.post('http://localhost:5001/games/addPlayer', newPlayer)
             .then(res => console.log(res.data));
+
+            axios.get('http://localhost:5001/games/')
+            .then(response => {
+              for (var i = 0; i < response.data.length; i++){
+                if (response.data[i].joinCode == this.roomId){
+                  this.databaseGameId = response.data[i]._id;
+                }
+              }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        
         }
       }
     })
@@ -276,6 +301,7 @@ class App extends Component {
         isRoomCreator={this.state.isRoomCreator}
         endGame={this.endGame}
         roomId ={this.roomId}
+        databaseGameId = {this.databaseGameId}
       />
     }
    </div>
