@@ -85,7 +85,7 @@ class App extends Component {
     Swal.mixin({
       confirmButtonText: 'Next &rarr;',
       showCancelButton: true,
-      progressSteps: ['1', '2']
+      progressSteps: ['1', '2', '3']
     }).queue([
       {
         title: 'Share this room ID with your friend',
@@ -94,6 +94,32 @@ class App extends Component {
       {
         title: 'Type your username here',
         input: 'text'
+      },
+      {
+        title: 'Song 1',
+        text: 'List your top 5 songs!',
+        input: 'text',
+        inputPlaceholder: 'Enter your first song'
+      },
+      {
+        title: 'Song 2',
+        input: 'text',
+        inputPlaceholder: 'Enter your second song'
+      },
+      {
+        title: 'Song 3',
+        input: 'text',
+        inputPlaceholder: 'Enter your third song'
+      },
+      {
+        title: 'Song 4',
+        input: 'text',
+        inputPlaceholder: 'Enter your fourth song'
+      },
+      {
+        title: 'Song 5',
+        input: 'text',
+        inputPlaceholder: 'Enter your fifth song'
       }
     ]).then((result) => {
       if (result.value) {
@@ -113,7 +139,7 @@ class App extends Component {
           myTurn: true, // Room creator makes the 1st move
         });
 
-        //endpoint for adding a new player to a game in database
+        // endpoint for adding a new player to a game in database
         const newPlayer = {
           joinCode: this.roomId,
           playerName: result.value[1]
@@ -130,9 +156,12 @@ class App extends Component {
           })
           .catch((error) => {
               console.log(error);
-          })
-      }
-    })
+          });
+
+        // add songs to the database using result.value[2] - 6
+        // use result.value[1] for player name
+      };
+    });
   }
 
   // The 'Join' button was pressed
@@ -141,7 +170,7 @@ class App extends Component {
     Swal.mixin({
       confirmButtonText: 'Next &rarr;',
       showCancelButton: true,
-      progressSteps: ['1', '2']
+      progressSteps: ['1', '2', '3']
     }).queue([
       {
         inputPlaceholder: 'Enter the room id',
@@ -150,6 +179,32 @@ class App extends Component {
       {
         title: 'Type your username here',
         input: 'text'
+      },
+      {
+        title: 'Song 1',
+        text: 'List your top 5 songs!',
+        input: 'text',
+        inputPlaceholder: 'Enter your first song'
+      },
+      {
+        title: 'Song 2',
+        input: 'text',
+        inputPlaceholder: 'Enter your second song'
+      },
+      {
+        title: 'Song 3',
+        input: 'text',
+        inputPlaceholder: 'Enter your third song'
+      },
+      {
+        title: 'Song 4',
+        input: 'text',
+        inputPlaceholder: 'Enter your fourth song'
+      },
+      {
+        title: 'Song 5',
+        input: 'text',
+        inputPlaceholder: 'Enter your fifth song'
       }
     ]).then((result) => {
       if (result.value) {
@@ -188,11 +243,14 @@ class App extends Component {
             })
             .catch((error) => {
                 console.log(error);
-            })
+            });
+
+          // add songs to the database using result.value[2] - 6
+          // use result.value[1] for player name
         
-        }
-      }
-    })
+        };
+      };
+    });
 
   }
 

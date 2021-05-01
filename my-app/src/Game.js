@@ -47,7 +47,8 @@ class Game extends React.Component {
       squares: squares
     });
 
-    // update scores
+    // update scoreboard
+    // update current song
   }
 
   timer = () => {
@@ -119,6 +120,7 @@ class Game extends React.Component {
     
     this.props.pubnub.getMessage(this.props.gameChannel, (msg) => {
 
+      // edit publish move to publish scoreboard instead?
       // Publish move to the opponent's board    
       this.publishMove(msg.message.index, msg.message.piece);
 
@@ -149,15 +151,10 @@ class Game extends React.Component {
   updateScore = (winner) => {
     // if selected index = correct index
 
-    /*im guessing this is filler so commenting it out
-    if (true) {
-      this.score += 1;
-    }
-    */
     const updateScoreThing = {
       joinCode: this.roomId,
-      playerName: winner,
-      score: 1
+      playerId: winner,
+      score: this.score
     };
     axios.post('http://localhost:5001/games/updateScore', updateScoreThing)
       .then(res => console.log(res.data));
@@ -246,22 +243,24 @@ class Game extends React.Component {
     // Update chosen button to show that it's been clicked
     console.log(index);
 
-    if (index == 3) { 
+    if (index == this.answer) { 
       console.log("correct!");
       squares[index] = 'X';
+
+      this.score += 1;
 
        this.setState({
          squares: squares,
        });
 
       // Publish move to the channel
-      this.props.pubnub.publish({
-        message: {
-          index: index,
-          piece: 'X',
-        },
-        channel: this.props.gameChannel
-      });  
+      // this.props.pubnub.publish({
+      //   message: {
+      //     index: index,
+      //     piece: 'X',
+      //   },
+      //   channel: this.props.gameChannel
+      // });  
 
       // Check if there is a winner
       this.checkForWinner();
