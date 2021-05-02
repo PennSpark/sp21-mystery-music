@@ -74,7 +74,7 @@ class App extends Component {
       joinCode: this.roomId,
     };
     axios.post('http://localhost:5001/games/add', newGame)
-      .then(res => console.log(res.data));
+    .then(res => console.log(res.data));
 
     this.pubnub.subscribe({
       channels: [this.lobbyChannel],
@@ -151,15 +151,21 @@ class App extends Component {
             for (var i = 0; i < response.data.length; i++){
               if (response.data[i].joinCode == this.roomId){
                 this.databaseGameId = response.data[i]._id;
+                for (var j = 2; j <= 6; j++){
+                  var newPair = {
+                    playerName : result.value[1],
+                    songName : result.value[j]
+                  };
+                  axios.post('http://localhost:5001/games/addPair/' + this.databaseGameId, newPair)
+                    .then(res => console.log(res.data));
+                }
+              
               }
             }
           })
           .catch((error) => {
               console.log(error);
           });
-
-        // add songs to the database using result.value[2] - 6
-        // use result.value[1] for player name
       };
     });
   }
@@ -238,16 +244,21 @@ class App extends Component {
               for (var i = 0; i < response.data.length; i++){
                 if (response.data[i].joinCode == this.roomId){
                   this.databaseGameId = response.data[i]._id;
+                  for (var j = 2; j <= 6; j++){
+                    var newPair = {
+                      playerName : result.value[1],
+                      songName : result.value[j]
+                    };
+                    axios.post('http://localhost:5001/games/addPair/' + this.databaseGameId, newPair)
+                      .then(res => console.log(res.data));
+                  }
+                
                 }
               }
             })
             .catch((error) => {
                 console.log(error);
             });
-
-          // add songs to the database using result.value[2] - 6
-          // use result.value[1] for player name
-        
         };
       };
     });
