@@ -25,7 +25,9 @@ class Game extends React.Component {
     this.answer = 0;
 
     this.state = {
-      //placeholder
+      // squares contains the player names in the game !
+      // use fillArray to get list of players from db
+      // displayed by Board.js
       squares: [], 
       size : 0
     };
@@ -149,7 +151,6 @@ class Game extends React.Component {
 
 	// Update score if answer is correct
   updateScore = (winner) => {
-    // if selected index = correct index
 
     const updateScoreThing = {
       joinCode: this.roomId,
@@ -219,6 +220,7 @@ class Game extends React.Component {
    
   // Publishing an opponent's move onto the board
   // not even necessary ):
+  // except maybe !!! for publishing scores ig
   publishMove = (index, piece) => {
     var squares = this.state.squares;
 
@@ -240,11 +242,11 @@ class Game extends React.Component {
   onMakeMove = (index) => {
     var squares = this.state.squares;
 
-    // Update chosen button to show that it's been clicked
     console.log(index);
 
     if (index == this.answer) { 
       console.log("correct!");
+      // Update chosen button to show that it's been clicked
       squares[index] = 'X';
 
       this.score += 1;
@@ -315,6 +317,7 @@ class Game extends React.Component {
             </div>
           </div>
           <div class="overlap-group2">
+            // scoreboard update
             <div class="leaderboard-example">
               <div class="overlap-group3">
                 <div class="name-1 karla-normal-black-24px">Linda</div>
