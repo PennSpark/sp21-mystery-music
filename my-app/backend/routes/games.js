@@ -97,7 +97,7 @@ router.route('/addPlayer').post((req, res) => {
 
         game.players.push({
             playerName: req.body.playerName,
-            playerId: game.size + 1
+            playerId: game.size
         })
 
         game.size = game.size + 1;
@@ -115,7 +115,7 @@ router.route('/updateScore').post((req, res) => {
 
         const index = game.players.findIndex(player => player.playerName === req.body.playerName);
 
-        game.players[index].score += req.body.score;
+        game.players[index].score = req.body.score;
 
         game.save()
             .then(() => res.json('Score updated!'))

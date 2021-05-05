@@ -214,6 +214,8 @@ class App extends Component {
       }
     ]).then((result) => {
       if (result.value) {
+        this.roomId = result.value[0];
+  
         // const answers = JSON.stringify(result.value)
         Swal.fire({
           html: `
