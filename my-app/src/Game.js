@@ -86,8 +86,6 @@ class Game extends React.Component {
     var timer = setInterval(() => {
       if (timeleft <= 0) {
         clearInterval(timer);
-        // add new state if i want to display timer on screen? 
-        // implement if there is time
 
         this.setState({
           time: timeleft
@@ -178,10 +176,7 @@ class Game extends React.Component {
       });
     }, 1000);
 
-    //gets size(num of players in game) and updates squares
-    // TODO:
-    // this is used to initally populate game board, rn it doesn't update
-    // board for players already ingame when new players join
+    // gets size(num of players in game) and updates squares
     axios.get('http://localhost:5001/games/getGame/' + this.databaseGameId)
     .then(response => {
       console.log("hi there");
@@ -207,20 +202,14 @@ class Game extends React.Component {
     // what is used to get info from other players so we can appropriately
     // update the scoreboard based on whether or not other people got answers right
     this.props.pubnub.getMessage(this.props.gameChannel, (msg) => {
-
-      // edit publish move to publish scoreboard instead?
-      // old copied code, currently publishes move to opponents' boards
-      // but not actually bc i commented out the code that sends the message    
+ 
       this.publishMove(msg.message.index);
 
       // Start a new game
-      // TODO: update this appropriately with new values in state and etc
-      // idk if necessary? if no time just delete and don't give option to replay game
       if(msg.message.reset){
         this.setState({
-          // update players
-          squares: this.fillArray(4),
-          round: 0
+          round: 0,
+          scores: [0, 0, 0, 0]
         });
 
         this.score = 0;
@@ -236,10 +225,7 @@ class Game extends React.Component {
     });
   }
 
-	// Update db score if answer is correct
-  // not necessary bc i think i can use pubnub to keep track of scores?
-  // side note is pubnub even necessary with backend???
-  // so yeah bc there's no route to retrieve scores i'm not using this function!
+	// Update db score 
   updateScore = (player) => {
 
     const updateScoreThing = {
@@ -250,11 +236,7 @@ class Game extends React.Component {
 
     axios.post('http://localhost:5001/games/updateScore', updateScoreThing)
       .then(res => console.log(res.data));
-      
 
-		// End the game once there is a winner
-		// this.gameOver = true;
-		// this.newRound(winner);	
   }
 
   // bad function name, actually just displays pop up for when game is 
@@ -330,15 +312,9 @@ class Game extends React.Component {
       scores: scores
     });
 
-    // no need to check correctness since done in new move,
-    // just update scores based on info from pubnub message 
-    // this function is called in componentDidMount
-
   }
 
   // function runs when a button on the gameboard is clicked
-  // don't need to check correctness, just update current state.guess
-  // TODO: have some visible display to buttons being clicked? rn it's just console
   onMakeMove = (index) => {
     var squares = this.state.squares;
 
@@ -359,26 +335,6 @@ class Game extends React.Component {
 
     }
 
-    // if (index == this.answer) { 
-    //   console.log("correct!");
-    //   // Update chosen button to show that it's been clicked
-    //   // squares[index] = 'X';
-
-    //   this.score += 1;
-
-    //    this.setState({
-    //      squares: squares,
-    //    });
-
-      // Publish move to the channel
-      // this.props.pubnub.publish({
-      //   message: {
-      //     player: index,
-      //    
-      //   },
-      //   channel: this.props.gameChannel
-      // });  
-    // }
   }
 
   render() {
