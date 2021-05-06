@@ -144,7 +144,8 @@ router.route('/removePlayer').post((req, res) => {
 router.route('/getRandomPair/:id').get((req, res) => {
     Game.findById(req.params.id)
         .then(game => {
-            var pair = game.songPlayerPairs.splice(Math.floor(Math.random() * game.songPlayerPairs.length), 1);
+            // modified pair to return the entire array because of issue with frontend
+            var pair = game.songPlayerPairs;
             game.save()
                 .then(() => res.json(pair))
                 .catch(err => res.status(400).json('Error: ' + err));

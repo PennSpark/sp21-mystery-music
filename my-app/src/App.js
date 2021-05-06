@@ -157,7 +157,10 @@ class App extends Component {
                     songName : result.value[j]
                   };
                   axios.post('http://localhost:5001/games/addPair/' + this.databaseGameId, newPair)
-                    .then(res => console.log(res.data));
+                    .then(res => {
+                      console.log(res.data);
+                      this.joinRoom(this.roomId);
+                    });
                 }
               
               }
@@ -339,10 +342,10 @@ class App extends Component {
              src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/608797e5c0ff3678276ff026/img/card-pricing-3@1x.svg"
            />
            <div class="text-1">
-             How to Play<br />1. Up to 8 players may join a game, be sure to share the join code with your friends!<br />2. During
-             each round, the game will play a song from one of the player’s Spotify playlist.<br />3. Players then have to
-             select the user whose playlist they think the song is from.<br />4. Correct answers get 1 point, and wrong answers
-             get 0 points.<br />5. After 20 rounds, the player with the most number of points wins!
+             How to Play<br />1. This game is for 4 players, so be sure to share the join code with your friends!<br />2. During
+             each round which is 10 seconds long, the game will play a song from one of the player’s entered songs.<br />3. Players then have to
+             select the user who they think entered the song<br />4. Correct answers get 1 point, and wrong answers
+             get 0 points.<br />5. After 10 rounds, the player with the most number of points wins!
            </div>
            <div class="flex-row">
               <button

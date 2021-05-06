@@ -30,7 +30,8 @@ class Game extends React.Component {
       scores: [],
       guess: "",
       answer: 0,
-      currentSong: ""
+      currentSong: "",
+      time: 10
     };
 
     console.log("size: " + this.state.size);
@@ -40,18 +41,6 @@ class Game extends React.Component {
   // function for each new round
   newRound = () => {
     var scores = this.state.scores;
-    // DONE (yet to be tested)
-    // check guess and compare to actual answer
-    // if correct use props.publish to push score to other players to update their render
-    // also update current state (setstate) to update local render (done below)
-
-    // TODO: check that this.state.guess is actually the index value needed?
-    // ik player ids are based on when the player is added to the game so i think it works
-    // but idk for sure !
-    // also if componentMount w/e it's called actually runs to publish scores to other players
-    // and even if it does does it publish all of them if they're all sent at the same time?
-    // publish to database in timer before retrieving score
-
 
     // get updated scores from db 
     axios.get('http://localhost:5001/games/getGame/' + this.databaseGameId)
@@ -100,9 +89,13 @@ class Game extends React.Component {
         // add new state if i want to display timer on screen? 
         // implement if there is time
 
+        this.setState({
+          time: timeleft
+        });
+
         console.log("timer finish!");
-        // end game if 4 rounds have been played, replace 4 with global var later
-        if (this.state.round < 4) {
+        // end game if 10 rounds have been played
+        if (this.state.round < 10) {
 
         this.newRound();
       } else {
@@ -110,31 +103,13 @@ class Game extends React.Component {
         this.checkForWinner();
       }
       } else {
-        if (timeleft % 5 === 0) {
-          console.log(timeleft);
-        }
+        this.setState({
+          time: timeleft
+        });
         
       }
       timeleft -= 1;
     }, 1000);
-  }
-
-  // tbh unnecessary function bc it doesn't work?
-  // leaving here for now in case it's useful (copied into componentDidMount atm)
-  fillArray(size) {
-    var array = Array(size).fill();
-    axios.get('http://localhost:5001/games/getGame/' + this.databaseGameId)
-    .then(response => {
-      for (var i = 0; i < response.data.size; i++){
-        console.log(response.data.players[i].playerName);
-        array[i] = response.data.players[i].playerName;
-      }
-    })
-    .catch((error) => {
-        console.log(error);
-    })
-
-    return array;
   }
   
   // retrieve next player song pair info, to be used in newRound()
@@ -143,15 +118,22 @@ class Game extends React.Component {
     .then(response => {
       console.log(response);
       //player id of song
-      console.log("id " + response.data[0].playerId);
+      //console.log("id " + response.data[0].playerId);
       //player name of song if needed
-      console.log("name " + response.data[0].playerName);
+      console.log("name " + response.data[this.state.round * 2].playerName);
       //name of song if needed
-      console.log("song " + response.data[0].songName);
+      console.log("song " + response.data[this.state.round * 2].songName);
+
+      var answer = 0;
+      for (var i = 0; i < this.state.size; i++) {
+        if (response.data[this.state.round * 2].playerName.localeCompare(this.state.squares[i]) === 0) {
+          answer = i;
+        }
+      }
 
       this.setState({
-        answer: response.data[0].playerId,
-        currentSong: response.data[0].songName
+        answer: answer,
+        currentSong: response.data[this.state.round * 2].songName
       });
 
       console.log("got pair");
@@ -163,21 +145,13 @@ class Game extends React.Component {
 
   // function runs whenever a new element is added to the DOM
   // maybe switch to componentDidUpdate if more appropriate?
-  // because of pubnub, need to run pubnub to publish updated local scores
-  // received from other players and aaaa
   componentDidMount() {
-    // currently timer() (and game) starts on button push but
-    // that only runs locally for one player, idk if i should just 
-    // make a statement that starts the game when there are 4 players
-    // i could use pubnub to start timer at the same time??? maybe but
-    // too much work and prev sol would be easier ig
-    // currently commented out atm
-    // this.timer();
+
     var squares = Array(this.state.size).fill("loading names");
     var scores = Array(this.state.size).fill("loading scores");
 
     this.timer2 = setInterval(() => {
-      if (this.state.size === 2) {
+      if (this.state.size === 4) {
         this.timer();
       }
 
@@ -202,7 +176,7 @@ class Game extends React.Component {
       .catch((error) => {
           console.log(error);
       });
-    }, 2000);
+    }, 1000);
 
     //gets size(num of players in game) and updates squares
     // TODO:
@@ -284,13 +258,14 @@ class Game extends React.Component {
   }
 
   // bad function name, actually just displays pop up for when game is 
-  // TODO: actually display winner lol
   checkForWinner = () => {
     var winner = 0;
 
     for(var i = 0; i < this.state.size; i++) {
       if (this.state.scores[i] > this.state.scores[winner]) {
-        winner = i;
+        winner = this.state.squares[i];
+      } else {
+        winner = this.state.squares[0];
       }
     }
 
@@ -300,7 +275,7 @@ class Game extends React.Component {
         Swal.fire({      
               position: 'top',
               allowOutsideClick: false,
-              title: 'Game Over',
+              title: winner + ' won!',
               text: 'Want to play again?',
               showCancelButton: true,
               confirmButtonColor: 'rgb(208,33,41)',
@@ -327,6 +302,8 @@ class Game extends React.Component {
                   },
                   channel: this.props.gameChannel
                 });
+                axios.delete('http://localhost:5001/games/updateScore'+ this.databaseGameId)
+                .then(res => console.log(res));
               }
             })      
           
@@ -334,7 +311,7 @@ class Game extends React.Component {
       Swal.fire({  
             position: 'top',
             allowOutsideClick: false,
-            title: 'Game Over',
+            title: winner + ' won!',
             text: 'Waiting for a new round...',
             confirmButtonColor: 'rgb(208,33,41)',
             width: 275
@@ -408,19 +385,6 @@ class Game extends React.Component {
     return (
       
       <div className="game">
-         {/* You are player {this.player}
-        <div className="prompt">
-          Guess who! {this.answer}
-        </div>
-        <br></br> */}
-        
-        {/* <div className="scores-container">
-          <div>
-            SCORES {this.scores}
-          </div>
-        </div>   
-      </div> */}
-      
       <div class="container-center-horizontal">
       <div class="game-screen-1 screen">
         <div class="flex-row-5">
@@ -430,8 +394,6 @@ class Game extends React.Component {
           />
           <div class="overlap-group">
             <h1 class="text-1">Guess Whose Playlist?</h1>
-            Round: {this.state.round} <br/>
-            Song: {this.state.currentSong}
           </div>
         </div>
         <div class="flex-row-4">
@@ -442,7 +404,14 @@ class Game extends React.Component {
             />
           </div>
           <div class="flex-col">
-            <div class="album-cover"></div>
+            <div class="album-cover">
+              <h1>
+            Round: {this.state.round} <br/>
+            Song: {this.state.currentSong}
+            </h1>
+            </div>
+            <br/>
+            <div class="countdown">Time left: {this.state.time}</div>  
             <div class="play-bar">
               <div class="overlap-group3-1">
                 <div class="rectangle"></div>
@@ -454,10 +423,6 @@ class Game extends React.Component {
             <div class="leaderboard-example">
               <div class="overlap-group3">
                 <div class="name-1 karla-normal-black-24px">{this.state.squares[0]}</div>
-                <img
-                  class="star-1"
-                  src="https://anima-uploads.s3.amazonaws.com/projects/60760a93d4d62b3f8b0aea2b/releases/6078ee0985f5e7f39b088386/img/star-1@2x.svg"
-                />
                 <div class="number-1 karla-bold-black-24px">{this.state.scores[0]}</div>
               </div>
               <div class="flex-row">
@@ -476,15 +441,14 @@ class Game extends React.Component {
           </div>
 
         </div>
-        <button type="button" value="Start Game" onClick={() => this.timer()} >start timer  </button>
-        <div className="board">
+        {/* <button type="button" value="Start Game" onClick={() => this.timer()} >start timer  </button> */}
+
           <Board
               squares={this.state.squares}
               size={this.props.size}
               onClick={index => this.onMakeMove(index)}
             />   
-            <div id="countdown"></div>      
-        </div>
+ 
       </div>
     </div>
     </div>

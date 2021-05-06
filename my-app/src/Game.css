@@ -283,3 +283,31 @@
   text-decoration: none;
   display: contents;
 }
+
+.album-cover {
+  text-align: center;
+  padding: 110px 0;
+  color: var(--flirt);
+  font-family: var(--font-family-karla);
+  font-size: 40px;
+  font-weight: 700;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.board {
+  position: absolute;
+  top: 130%;
+  left: 35%;
+}
+
+.countdown {
+  font-family: var(--font-family-karla);
+  font-size: 20px;
+}
+
+body {
+  background-color: #92b4a7;
+}
