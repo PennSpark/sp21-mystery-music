@@ -246,9 +246,11 @@ class Game extends React.Component {
     for(var i = 0; i < this.state.size; i++) {
       if (this.state.scores[i] > this.state.scores[winner]) {
         winner = this.state.squares[i];
-      } else {
-        winner = this.state.squares[0];
       }
+    }
+
+    if (winner === 0) {
+      winner = this.state.squares[0];
     }
 
     // All rounds have been completed
@@ -316,7 +318,6 @@ class Game extends React.Component {
 
   // function runs when a button on the gameboard is clicked
   onMakeMove = (index) => {
-    var squares = this.state.squares;
 
     console.log(index);
 

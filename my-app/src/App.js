@@ -1,7 +1,6 @@
 // App.js
 import React, { Component } from 'react';
 import Game from './Game';
-import game from './Board';
 import * as PubNubReact from 'pubnub-react';
 import Swal from "sweetalert2";
 import shortid from 'shortid';
@@ -13,10 +12,10 @@ class App extends Component {
     super(props);
 
     this.pubnub = new PubNubReact({
-      publishKey: "pub-c-353f0377-1a09-4a4f-be96-1f51d601592c",
-      subscribeKey: "sub-c-7cb8e092-8c1a-11eb-9de7-3a1dcc291cdf"
+      publishKey: process.env.REACT_APP_PUBLISHKEY,
+      subscribeKey: process.env.REACT_APP_SUBSCRIBEKEY
     });
-    // TODO: Clean up code and get rid of unnecessary bits
+
     this.state = {
       player: '', // username players enter for themselves
       isPlaying: false, // Set to true when at least 2 players are in a channel
@@ -26,7 +25,7 @@ class App extends Component {
     };
     this.lobbyChannel = null; // Lobby channel
     this.gameChannel = null; // Game channel
-    this.size = null; // Number of players in room USE DATABASE FOR THIS
+    this.size = null; // Number of players in room
     this.roomId = null; // Unique id when player creates a room
     this.databaseGameId = null // id for game in database for endpoints
     this.pubnub.init(this); // Initialize PubNub
